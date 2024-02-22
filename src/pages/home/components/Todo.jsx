@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { todoAction } from '../../../store/slices/todo.slice';
 import todoApi from '../../../apis/todo.api';
@@ -6,6 +6,8 @@ import todoApi from '../../../apis/todo.api';
 export default function Todo() {
   const dispatch = useDispatch()
   const todoStore = useSelector(store => store.todoStore)
+
+  const [check, setCheck] = useState(false)
 
   const handleAddTodo = async (e) => {
     e.preventDefault()
@@ -19,14 +21,25 @@ export default function Todo() {
       console.log(err);
     }
   }
+  const handleDeleteTodo = async (id) => {
+    try {
+      let result = await todoApi.deleteTodo(id)
+      dispatch(todoAction.deleteTodo(result.data.data.id))
+    } catch (err) {
+      console.log(err);
+    }
+  }
   return (
     <div>
       <div className='listTodo'>
         {
           todoStore.data?.map(item => {
-            return <div key={item.id}><h3>{item.todo}</h3><div><span onClick={() => {
-
-            }}>Check</span><span>Delete</span></div></div>
+            return <div key={item.id}><h3>{item.todo}</h3><div><i onClick={(e)=>{
+              e.target.parentNode.querySelector('h3').style.textDecoration = 'line-through'
+              
+            }} className="fa-solid fa-square-check"></i><i onClick={() => {
+              handleDeleteTodo(item.id)
+            }} className="fa-solid fa-trash-can"></i></div></div>
           })
         }
       </div>
