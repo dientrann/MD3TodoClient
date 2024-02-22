@@ -7,7 +7,23 @@ export default function Todo() {
   const dispatch = useDispatch()
   const todoStore = useSelector(store => store.todoStore)
 
-  const [check, setCheck] = useState(false)
+  const [check, setCheck] = useState(null)
+
+  const handleCheck = (e) => {
+    let isChecked = e.target.classList.contains('fa-solid')
+    if (isChecked) {
+      e.target.classList.remove('fa-solid')
+      e.target.classList.add('fa-regular')
+      let el = e.target.parentNode.parentNode.querySelector('h3')
+      el.style.textDecoration = 'line-through'
+    } else {
+      e.target.classList.remove('fa-regular')
+      e.target.classList.add('fa-solid')
+      let el = e.target.parentNode.parentNode.querySelector('h3')
+      el.style.textDecoration = 'none'
+
+    }
+  }
 
   const handleAddTodo = async (e) => {
     e.preventDefault()
@@ -34,12 +50,13 @@ export default function Todo() {
       <div className='listTodo'>
         {
           todoStore.data?.map(item => {
-            return <div key={item.id}><h3>{item.todo}</h3><div><i onClick={(e)=>{
-              e.target.parentNode.querySelector('h3').style.textDecoration = 'line-through'
-              
-            }} className="fa-solid fa-square-check"></i><i onClick={() => {
-              handleDeleteTodo(item.id)
-            }} className="fa-solid fa-trash-can"></i></div></div>
+            return <div className='itemTodo' key={item.id}><h3>{item.todo}</h3><div>
+              <i onClick={(e) => {
+                handleCheck(e)
+              }} className="fa-solid fa-square-check"></i>
+              <i onClick={() => {
+                handleDeleteTodo(item.id)
+              }} className="fa-solid fa-trash-can"></i></div></div>
           })
         }
       </div>
